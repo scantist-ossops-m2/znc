@@ -647,7 +647,7 @@ public:
 			}
 
 			if (!pNetwork->AddChan(pChan)) {
-				WebSock.PrintErrorPage("Could not add channel [" + sChanName + "]");
+				WebSock.PrintErrorPage("Could not add channel [" + pChan->GetName() + "]");
 				return true;
 			}
 		}
