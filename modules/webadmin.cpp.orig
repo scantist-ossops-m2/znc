@@ -667,19 +667,13 @@ public:
 				return true;
 			}
 
-			// This could change the channel name and e.g. add a "#" prefix
+			if (pNetwork->FindChan(sChanName.Token(0))) {
+				WebSock.PrintErrorPage("Channel [" + sChanName.Token(0) + "] already exists");
+				return true;
+			}
+
 			pChan = new CChan(sChanName, pNetwork, true);
-
-			if (pNetwork->FindChan(pChan->GetName())) {
-				WebSock.PrintErrorPage("Channel [" + pChan->GetName() + "] already exists");
-				delete pChan;
-				return true;
-			}
-
-			if (!pNetwork->AddChan(pChan)) {
-				WebSock.PrintErrorPage("Could not add channel [" + pChan->GetName() + "]");
-				return true;
-			}
+			pNetwork->AddChan(pChan);
 		}
 
 		pChan->SetBufferCount(WebSock.GetParam("buffercount").ToUInt(), spSession->IsAdmin());
@@ -705,7 +699,7 @@ public:
 
 		CTemplate TmplMod;
 		TmplMod["User"] = pUser->GetUserName();
-		TmplMod["ChanName"] = pChan->GetName();
+		TmplMod["ChanName"] = sChanName;
 		TmplMod["WebadminAction"] = "change";
 		FOR_EACH_MODULE(it, pNetwork) {
 			(*it)->OnEmbeddedWebRequest(WebSock, "webadmin/channel", TmplMod);
